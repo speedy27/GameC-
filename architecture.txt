@@ -1,0 +1,36 @@
+PokemonCpp/
+│
+├── src/                      # Dossier contenant tous les fichiers source
+│   ├── main.cpp              # Point d'entrée du programme
+│   ├── Pokemon.cpp           # Implémentation des classes Pokemon et Attack
+│   ├── Battle.cpp            # Implémentation du système de combat
+│   ├── Game.cpp              # Implémentation de la logique du jeu
+│   └── SFMLGame.cpp          # Implémentation de l'interface graphique
+│
+├── include/                  # Dossier contenant tous les fichiers d'en-tête
+│   ├── Pokemon.h             # Définition des classes Pokemon et Attack
+│   ├── Battle.h              # Définition de la classe Battle
+│   ├── Game.h                # Définition de la classe Game
+│   └── SFMLGame.h            # Définition de la classe d'interface graphique
+│
+├── resources/                # Dossier contenant toutes les ressources
+│   ├── fonts/                # Polices d'écriture
+│   │   ├── pokemon.ttf
+│   │   └── arial.ttf
+│   │
+│   ├── images/               # Images et sprites
+│   │   ├── battle_bg.jpg
+│   │   ├── pikachu_front.png
+│   │   ├── pikachu_back.png
+│   │   ├── dracaufeu_front.png
+│   │   └── ...              
+│   │
+│   └── sounds/               # Effets sonores
+│       ├── select.wav
+│       ├── attack.wav
+│       └── ...
+│
+├── build/                    # Dossier pour les fichiers de build (créé automatiquement)
+│
+├── CMakeLists.txt            # Configuration CMake pour la compilation
+└── README.md                 # Instructions et documentation
