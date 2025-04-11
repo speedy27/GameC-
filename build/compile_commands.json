@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/kali/Documents/C++/GameC--1/build",
+  "command": "/usr/bin/c++  -I/home/kali/Documents/C++/GameC--1/include -g -std=gnu++14 -o CMakeFiles/PokemonCpp.dir/src/main.cpp.o -c /home/kali/Documents/C++/GameC--1/src/main.cpp",
+  "file": "/home/kali/Documents/C++/GameC--1/src/main.cpp",
+  "output": "CMakeFiles/PokemonCpp.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/kali/Documents/C++/GameC--1/build",
+  "command": "/usr/bin/c++  -I/home/kali/Documents/C++/GameC--1/include -g -std=gnu++14 -o CMakeFiles/PokemonCpp.dir/src/Pokemon.cpp.o -c /home/kali/Documents/C++/GameC--1/src/Pokemon.cpp",
+  "file": "/home/kali/Documents/C++/GameC--1/src/Pokemon.cpp",
+  "output": "CMakeFiles/PokemonCpp.dir/src/Pokemon.cpp.o"
+},
+{
+  "directory": "/home/kali/Documents/C++/GameC--1/build",
+  "command": "/usr/bin/c++  -I/home/kali/Documents/C++/GameC--1/include -g -std=gnu++14 -o CMakeFiles/PokemonCpp.dir/src/Battle.cpp.o -c /home/kali/Documents/C++/GameC--1/src/Battle.cpp",
+  "file": "/home/kali/Documents/C++/GameC--1/src/Battle.cpp",
+  "output": "CMakeFiles/PokemonCpp.dir/src/Battle.cpp.o"
+},
+{
+  "directory": "/home/kali/Documents/C++/GameC--1/build",
+  "command": "/usr/bin/c++  -I/home/kali/Documents/C++/GameC--1/include -g -std=gnu++14 -o CMakeFiles/PokemonCpp.dir/src/Game.cpp.o -c /home/kali/Documents/C++/GameC--1/src/Game.cpp",
+  "file": "/home/kali/Documents/C++/GameC--1/src/Game.cpp",
+  "output": "CMakeFiles/PokemonCpp.dir/src/Game.cpp.o"
+},
+{
+  "directory": "/home/kali/Documents/C++/GameC--1/build",
+  "command": "/usr/bin/c++  -I/home/kali/Documents/C++/GameC--1/include -g -std=gnu++14 -o CMakeFiles/PokemonCpp.dir/src/SFMLGame.cpp.o -c /home/kali/Documents/C++/GameC--1/src/SFMLGame.cpp",
+  "file": "/home/kali/Documents/C++/GameC--1/src/SFMLGame.cpp",
+  "output": "CMakeFiles/PokemonCpp.dir/src/SFMLGame.cpp.o"
+}
+]
