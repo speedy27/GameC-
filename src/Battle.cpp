@@ -1,156 +1,100 @@
 #include "Battle.h"
+#include <sstream>
 #include <iostream>
-#include <random>
-#include <ctime>
-#include <thread>
-#include <chrono>
 
-Battle::Battle(Pokemon* player, Pokemon* opponent) : player(player), opponent(opponent) {
-    // Initialisation du générateur de nombres aléatoires
-    std::random_device rd;
-    rng = std::mt19937(rd());
+Battle::Battle(std::unique_ptr<Pokemon> p1, std::unique_ptr<Pokemon> p2)
+    : pokemon1(std::move(p1)), pokemon2(std::move(p2)) {}
+
+// Vérifie si le combat est terminé
+bool Battle::estCombatFini() const {
+    return pokemon1->estKO() || pokemon2->estKO();
 }
 
-void Battle::start() {
-    std::cout << "Un combat sauvage commence !" << std::endl;
-    std::cout << "Votre Pokémon: ";
-    player->displayStatus();
-    std::cout << "Pokémon adverse: ";
-    opponent->displayStatus();
-    std::cout << "\n";
+// Effectue l'attaque du joueur et gère la riposte de l'adversaire
+std::string Battle::effectuerAttaqueJoueur(const Attaque& attaqueJoueur) {
+    std::ostringstream resultat;
 
-    // Détermine qui commence en fonction de la vitesse
-    bool playerFirst = player->getSpeed() >= opponent->getSpeed();
-    
-    while (!player->isKO() && !opponent->isKO()) {
-        if (playerFirst) {
-            if (playerTurn()) {
-                break; // Le combat est terminé
-            }
-            if (!opponent->isKO() && opponentTurn()) {
-                break; // Le combat est terminé
-            }
-        } else {
-            if (opponentTurn()) {
-                break; // Le combat est terminé
-            }
-            if (!player->isKO() && playerTurn()) {
-                break; // Le combat est terminé
-            }
-        }
+    // Attaque du joueur
+    int degats = pokemon2->subirDegats(attaqueJoueur.puissance);
+    resultat << pokemon1->getNom() << " utilise " << attaqueJoueur.nom
+             << " et inflige " << degats << " dégâts à " << pokemon2->getNom() << "!\n";
+
+    if (pokemon2->estKO()) {
+        resultat << pokemon2->getNom() << " est K.O. !\n";
+        return resultat.str();
     }
 
-    // Affichage du résultat du combat
-    if (opponent->isKO()) {
-        std::cout << "Félicitations! " << opponent->getName() << " est K.O.!" << std::endl;
-        std::cout << "Vous avez gagné le combat!" << std::endl;
-    } else {
-        std::cout << "Votre " << player->getName() << " est K.O.!" << std::endl;
-        std::cout << "Vous avez perdu le combat!" << std::endl;
+    // Riposte de l'adversaire
+    Attaque attaqueAdverse = pokemon2->choisirAttaqueAleatoire();
+    int degatsRiposte = pokemon1->subirDegats(attaqueAdverse.puissance);
+
+    resultat << pokemon2->getNom() << " riposte avec " << attaqueAdverse.nom
+             << " et inflige " << degatsRiposte << " dégâts à " << pokemon1->getNom() << "!\n";
+
+    if (pokemon1->estKO()) {
+        resultat << pokemon1->getNom() << " est K.O. !\n";
     }
+
+    return resultat.str();
 }
 
-bool Battle::playerTurn() {
-    std::cout << "\n--- VOTRE TOUR ---" << std::endl;
-    player->displayStatus();
-    opponent->displayStatus();
-    player->displayAttacks();
-    
-    int choice;
-    do {
-        std::cout << "Choisissez une attaque (1-" << player->getAttacks().size() << "): ";
-        std::cin >> choice;
-    } while (choice < 1 || choice > static_cast<int>(player->getAttacks().size()));
-    
-    const Attack& selectedAttack = player->getAttacks()[choice - 1];
-    
-    std::cout << player->getName() << " utilise " << selectedAttack.getName() << "!" << std::endl;
-    
-    // Vérifier si l'attaque touche
-    if (checkAccuracy(selectedAttack)) {
-        int damage = calculateDamage(*player, *opponent, selectedAttack);
-        float effectiveness = getTypeEffectiveness(selectedAttack.getType(), opponent->getType());
-        
-        if (effectiveness > 1.5f) {
-            std::cout << "C'est super efficace!" << std::endl;
-        } else if (effectiveness < 0.6f && effectiveness > 0.0f) {
-            std::cout << "Ce n'est pas très efficace..." << std::endl;
-        } else if (effectiveness == 0.0f) {
-            std::cout << "Ça n'affecte pas " << opponent->getName() << "..." << std::endl;
-        }
-        
-        opponent->takeDamage(damage);
-        std::cout << "Ça inflige " << damage << " dégâts!" << std::endl;
-    } else {
-        std::cout << "Mais l'attaque échoue!" << std::endl;
+// Dessine le combat dans la fenêtre SFML
+void Battle::dessinerCombat(sf::RenderWindow& window, sf::Font& font) const {
+    // Pokémon du joueur
+    sf::Texture textureJoueur;
+    if (textureJoueur.loadFromFile("resources/images/" + pokemon1->getImageBack())) {
+        sf::Sprite spriteJoueur(textureJoueur);
+        spriteJoueur.setPosition(100, 400);
+        window.draw(spriteJoueur);
     }
-    
-    // Pause pour meilleure lisibilité
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    
-    return opponent->isKO();
-}
 
-bool Battle::opponentTurn() {
-    std::cout << "\n--- TOUR ADVERSE ---" << std::endl;
-    
-    // L'adversaire choisit une attaque aléatoire
-    std::uniform_int_distribution<int> dist(0, opponent->getAttacks().size() - 1);
-    int aiChoice = dist(rng);
-    const Attack& selectedAttack = opponent->getAttacks()[aiChoice];
-    
-    std::cout << opponent->getName() << " utilise " << selectedAttack.getName() << "!" << std::endl;
-    
-    // Vérifier si l'attaque touche
-    if (checkAccuracy(selectedAttack)) {
-        int damage = calculateDamage(*opponent, *player, selectedAttack);
-        float effectiveness = getTypeEffectiveness(selectedAttack.getType(), player->getType());
-        
-        if (effectiveness > 1.5f) {
-            std::cout << "C'est super efficace!" << std::endl;
-        } else if (effectiveness < 0.6f && effectiveness > 0.0f) {
-            std::cout << "Ce n'est pas très efficace..." << std::endl;
-        } else if (effectiveness == 0.0f) {
-            std::cout << "Ça n'affecte pas " << player->getName() << "..." << std::endl;
-        }
-        
-        player->takeDamage(damage);
-        std::cout << "Ça inflige " << damage << " dégâts!" << std::endl;
-    } else {
-        std::cout << "Mais l'attaque échoue!" << std::endl;
+    // Pokémon adverse
+    sf::Texture textureAdversaire;
+    if (textureAdversaire.loadFromFile("resources/images/" + pokemon2->getImageFront())) {
+        sf::Sprite spriteAdversaire(textureAdversaire);
+        spriteAdversaire.setPosition(700, 100);
+        window.draw(spriteAdversaire);
     }
-    
-    // Pause pour meilleure lisibilité
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    
-    return player->isKO();
-}
 
-int Battle::calculateDamage(const Pokemon& attacker, const Pokemon& defender, const Attack& attack) {
-    // Formule simplifiée des dégâts Pokémon
-    float effectiveness = getTypeEffectiveness(attack.getType(), defender.getType());
-    
-    // Calcul de base des dégâts
-    float levelFactor = 2.0f; // Représente le niveau * 2 / 5 + 2
-    float attackDefenseRatio = static_cast<float>(attacker.getAttack()) / defender.getDefense();
-    float baseDamage = (levelFactor * attack.getPower() * attackDefenseRatio) / 50 + 2;
-    
-    // Facteur aléatoire (entre 0.85 et 1.0)
-    std::uniform_real_distribution<float> randomFactor(0.85f, 1.0f);
-    float random = randomFactor(rng);
-    
-    // STAB (Same Type Attack Bonus)
-    float stab = (attack.getType() == attacker.getType()) ? 1.5f : 1.0f;
-    
-    // Calcul final
-    int finalDamage = static_cast<int>(baseDamage * stab * effectiveness * random);
-    if (finalDamage < 1) finalDamage = 1; // Un minimum de 1 de dégâts
-    
-    return finalDamage;
-}
+    // Fonction locale pour dessiner les barres de PV
+    auto dessinerBarrePV = [&](int pv, int pvMax, float x, float y) {
+        sf::RectangleShape fondBarre(sf::Vector2f(200, 20));
+        fondBarre.setFillColor(sf::Color(50, 50, 50));
+        fondBarre.setPosition(x, y);
+        window.draw(fondBarre);
 
-bool Battle::checkAccuracy(const Attack& attack) {
-    std::uniform_int_distribution<int> dist(1, 100);
-    int roll = dist(rng);
-    return roll <= attack.getAccuracy();
+        float ratio = static_cast<float>(pv) / pvMax;
+        sf::RectangleShape barrePV(sf::Vector2f(200 * ratio, 20));
+
+        if (ratio > 0.5f)
+            barrePV.setFillColor(sf::Color::Green);
+        else if (ratio > 0.3f)
+            barrePV.setFillColor(sf::Color::Yellow);
+        else
+            barrePV.setFillColor(sf::Color::Red);
+
+        barrePV.setPosition(x, y);
+        window.draw(barrePV);
+    };
+
+    dessinerBarrePV(pokemon1->getPV(), pokemon1->getPVMax(), 100, 370);
+    dessinerBarrePV(pokemon2->getPV(), pokemon2->getPVMax(), 700, 70);
+
+    // Fonction locale pour afficher les infos des Pokémon
+    auto afficherInfos = [&](const Pokemon& pokemon, float x, float y) {
+        sf::Text infos;
+        infos.setFont(font);
+        infos.setCharacterSize(20);
+        infos.setFillColor(sf::Color::White);
+
+        std::ostringstream oss;
+        oss << pokemon.getNom() << " (" << pokemon.getPV() << " PV)";
+        infos.setString(oss.str());
+        infos.setPosition(x, y);
+
+        window.draw(infos);
+    };
+
+    afficherInfos(*pokemon1, 100, 340);
+    afficherInfos(*pokemon2, 700, 40);
 }
