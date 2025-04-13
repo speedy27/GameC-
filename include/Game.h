@@ -1,26 +1,32 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <vector>
+#include <string>
+#include <memory>
 #include "Pokemon.h"
 #include "Battle.h"
-#include <vector>
+#include "CSVReader.h"
 
 class Game {
 private:
-    std::vector<Pokemon> availablePokemon;
-    Pokemon* playerPokemon;
-    Pokemon* opponentPokemon;
+    std::vector<std::unique_ptr<Pokemon>> tousLesPokemons;
+    std::vector<std::string> equipeJoueur; // <<--- NOM CORRECT !
 
 public:
     Game();
-    ~Game();
-    void initialize();
-    void createPokemonList();
-    void selectPlayerPokemon();
-    void selectOpponentPokemon();
-    void startBattle();
-    void displayMenu();
-    void run();
+
+    void initialiserJeu();
+
+    void afficherEquipe() const;
+
+    std::unique_ptr<Pokemon> choisirPokemon(const std::string& nom) const;
+
+    std::unique_ptr<Pokemon> choisirAdversaire() const;
+
+    const std::vector<std::string>& getEquipeJoueur() const;
+
+    std::unique_ptr<Battle> creerCombat(std::unique_ptr<Pokemon> joueur, std::unique_ptr<Pokemon> adversaire);
 };
 
-#endif
+#endif // GAME_H
