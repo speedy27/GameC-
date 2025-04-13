@@ -1,0 +1,7 @@
+Nom,Type,PV,Attaque1,Puissance1,Attaque2,Puissance2,Attaque3,Puissance3,Attaque4,Puissance4,ImageFront,ImageBack
+Pikachu,Electrik,100,Eclair,50,Tonnerre,70,Vive-Attaque,40,Boule Elek,60,pikachu_front.png,pikachu_back.png
+Tortank,Eau,150,Hydrocanon,70,Surf,60,Pistolet a O,40,Plongee,65,tortank_front.png,tortank_back.png
+Florizarre,Plante,140,Fouet-Lianes,65,Lance-Soleil,80,Tranch'Herbe,50,Synthese,30,florizarre_front.png,florizarre_back.png
+Dracaufeu,Feu,145,Lance-Flammes,70,Déflagration,85,Danseflamme,60,Flammeche,40,dracaufeu_front.png,dracaufeu_back.png
+Ronflex,Normal,160,Plaquage,70,Mitra-Poing,80,Balai,50,Giga Impact,90,ronflex_front.png,ronflex_back.png
+Alakazam,Psy,120,Psyko,80,Choc Mental,50,Pouvoir Antique,60,Telekinesie,40,alakazam_front.png,alakazam_back.png
