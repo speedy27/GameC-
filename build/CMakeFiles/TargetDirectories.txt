@@ -1,0 +1,3 @@
+/home/kali/PokeMon Cpp/simulateur_pokemon_with_leaders_impl/build/CMakeFiles/simulateur_pokemon.dir
+/home/kali/PokeMon Cpp/simulateur_pokemon_with_leaders_impl/build/CMakeFiles/edit_cache.dir
+/home/kali/PokeMon Cpp/simulateur_pokemon_with_leaders_impl/build/CMakeFiles/rebuild_cache.dir
